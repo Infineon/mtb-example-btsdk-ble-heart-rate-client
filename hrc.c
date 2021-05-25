@@ -104,7 +104,7 @@ extern const wiced_bt_cfg_buf_pool_t wiced_app_cfg_buf_pools[];
 #define APP_LED                     WICED_PLATFORM_LED_1
 #endif
 
-#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20719B2) || defined(CYW20721B2) || defined(CYW20735B1) || defined(CYW20819A1) )
+#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20719B2) || defined(CYW20721B2) || defined(CYW20735B1) || defined(CYW20835B1) || defined(CYW20819A1) )
 #define APP_LED                     WICED_GPIO_PIN_LED_1
 #endif
 
@@ -242,14 +242,14 @@ void hrc_application_init(void)
 {
     wiced_bt_gatt_status_t gatt_status;
 
-#if !defined(CYW20735B1) && !defined(CYW20819A1) && !defined(CYW20719B2) && !defined(CYW20721B2)
+#if !defined(CYW20735B1) && !defined(CYW20835B1) && !defined(CYW20819A1) && !defined(CYW20719B2) && !defined(CYW20721B2)
     /* Initialize wiced app */
     wiced_bt_app_init();
 #endif
     /* Configure LED PIN as input and initial outvalue as high */
     wiced_hal_gpio_configure_pin( APP_LED, GPIO_OUTPUT_ENABLE, GPIO_PIN_OUTPUT_HIGH );
 
-#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20735B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
+#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20735B1) || defined(CYW20835B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
     /* Configure buttons available on the platform */
     wiced_platform_register_button_callback( WICED_PLATFORM_BUTTON_1, hrc_interrupt_handler, NULL, WICED_PLATFORM_BUTTON_BOTH_EDGE);
 #else
@@ -734,13 +734,13 @@ void hrc_interrupt_handler(void* user_data, uint8_t value )
 {
     wiced_result_t  result;
     wiced_bt_gatt_status_t status;
-    int             num_slaves;
+    int             num_peripherals;
     static uint32_t button_pushed_time = 0;
 
     //WICED_BT_TRACE( "But1 %d, But2 %d, But3 %d \n", value & 0x01, ( value & 0x02 ) >> 1, ( value & 0x04 ) >> 2 );
     WICED_BT_TRACE( "hrc_interrupt_handler, app timer :%d\n", hrc_app_cb.timeout );
 
-#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20735B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
+#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20735B1) || defined(CYW20835B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
     if ( wiced_hal_gpio_get_pin_input_status(WICED_GET_PIN_FOR_BUTTON(WICED_PLATFORM_BUTTON_1)) == wiced_platform_get_button_pressed_value(WICED_PLATFORM_BUTTON_1) )
 #else
     if ( wiced_hal_gpio_get_pin_input_status(APP_BUTTON) == WICED_BUTTON_PRESSED_VALUE )
