@@ -191,7 +191,7 @@ const wiced_transport_cfg_t transport_cfg =
 };
 
 wiced_transport_buffer_pool_t*  host_trans_pool;
-wiced_timer_t app_timer;
+wiced_timer_t hrc_app_timer;
 
 /******************************************************
  *               Function Definitions
@@ -274,9 +274,9 @@ void hrc_application_init(void)
     hrc_load_keys_to_addr_resolution_db();
 
     /* Starting the periodic seconds timer */
-    if ( wiced_init_timer(&app_timer,hrc_timeout,0,WICED_SECONDS_PERIODIC_TIMER) == WICED_SUCCESS)
+    if ( wiced_init_timer(&hrc_app_timer,hrc_timeout,0,WICED_SECONDS_PERIODIC_TIMER) == WICED_SUCCESS)
     {
-        if ( wiced_start_timer(&app_timer,1) != WICED_SUCCESS )
+        if ( wiced_start_timer(&hrc_app_timer,1) != WICED_SUCCESS )
         {
             WICED_BT_TRACE("APP START timer FAILED \n");
         }
