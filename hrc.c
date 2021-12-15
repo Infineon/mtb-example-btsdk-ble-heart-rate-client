@@ -274,17 +274,8 @@ void hrc_application_init(void)
     hrc_load_keys_to_addr_resolution_db();
 
     /* Starting the periodic seconds timer */
-    if ( wiced_init_timer(&hrc_app_timer,hrc_timeout,0,WICED_SECONDS_PERIODIC_TIMER) == WICED_SUCCESS)
-    {
-        if ( wiced_start_timer(&hrc_app_timer,1) != WICED_SUCCESS )
-        {
-            WICED_BT_TRACE("APP START timer FAILED \n");
-        }
-    }
-    else
-    {
-        WICED_BT_TRACE("APP INIT timer FAILED \n");
-    }
+    wiced_init_timer(&hrc_app_timer,hrc_timeout,0,WICED_SECONDS_PERIODIC_TIMER);
+    wiced_start_timer(&hrc_app_timer,1);
 }
 
 /*
