@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2022, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -35,7 +35,7 @@
 *
 * Heart Rate Client (HRC) snippet application
 *
-* The HRC snippet application shows how to initialize and use WICED BT Heart Rate
+* The HRC snippet application shows how to initialize and use AIROC Bluetooth Heart Rate
 * Client library. This snippet implements GAP central role
 *
 * On initialization, the application starts scanning and connects to a nearby peripheral that advertises
@@ -47,17 +47,17 @@
 * Application tracks the duration of button pressed using a timer and performs the actions as explained below.
 *
 * Features demonstrated
-*  - Initialize and use WICED BT HRC library
+*  - Initialize and use AIROC Bluetooth HRC library
 *
 * To demonstrate the app, work through the following steps.
-* 1. Plug the WICED eval board into your computer
-* 2. Build and download the application (to the WICED board)
+* 1. Plug the AIROC eval board into your computer
+* 2. Build and download the application (to the AIROC board)
 * 3. On start of the application, push the button on the tag board and release with in 2 seconds, so that
 *    Heart Rate Client scans and connects to the Heart Rate Server which would have
 *    UUID_SERVICE_HEART_RATE in it's advertisements.
 *    Note:- If no Heart Rate server device is found nearby for 90secs, then scan stops automatically.
 *    To restart the scan, push the button on the tag board and release within 2 secs.
-* 4. Once connection established with BLE peripheral and heart rate service found in BLE peripheral,
+* 4. Once connection established with LE peripheral and heart rate service found in LE peripheral,
 *    automatically application receive heart rate notification from server on every 1 minute.
 * 5. To start or stop notifications, user should press the button and release between 2 to 4 seconds.
 * 6. During notifications if user finds energy expended value reched maximum value, i.e. 0xffff and want to reset
@@ -71,7 +71,7 @@
 #include "wiced_bt_gatt_util.h"
 #include "wiced_bt_cfg.h"
 #include "wiced_bt_uuid.h"
-#if ( defined(CYW20706A2) || defined(CYW20719B1) || defined(CYW20719B0) || defined(CYW20721B1) || defined(CYW20735B0) || defined(CYW43012C0) )
+#if ( defined(CYW20706A2) || defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW43012C0) )
 #include "wiced_bt_app_common.h"
 #endif
 #include "wiced_timer.h"
@@ -104,15 +104,8 @@ extern const wiced_bt_cfg_buf_pool_t wiced_app_cfg_buf_pools[];
 #define APP_LED                     WICED_PLATFORM_LED_1
 #endif
 
-#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20719B2) || defined(CYW20721B2) || defined(CYW20735B1) || defined(CYW20835B1) || defined(CYW20819A1) )
+#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20719B2) || defined(CYW20721B2) || defined(CYW20835B1) || defined(CYW20819A1) )
 #define APP_LED                     WICED_GPIO_PIN_LED_1
-#endif
-
-#ifdef CYW20735B0
-#define APP_BUTTON                  WICED_GPIO_PIN_BUTTON
-#define APP_LED                     WICED_GPIO_PIN_LED1
-#define APP_BUTTON_SETTINGS         ( GPIO_INPUT_ENABLE | GPIO_PULL_DOWN | GPIO_EN_INT_BOTH_EDGE )
-#define APP_BUTTON_DEFAULT_STATE    GPIO_PIN_OUTPUT_LOW
 #endif
 
 #define HRC_LOCAL_KEYS_VS_ID     (WICED_NVRAM_VSID_START)
@@ -200,7 +193,7 @@ wiced_timer_t hrc_app_timer;
 /*
  * Entry point to the application. Set device configuration and start BT
  * stack initialization.  The actual application initialization will happen
- * when stack reports that BT device is ready
+ * when stack reports that Bluetooth device is ready
  */
 APPLICATION_START()
 {
@@ -223,7 +216,7 @@ APPLICATION_START()
     // Note: WICED HCI must be configured to use this - see wiced_trasnport_init(), must
     // be called with wiced_transport_cfg_t.wiced_tranport_data_handler_t callback present
     wiced_set_debug_uart(WICED_ROUTE_DEBUG_TO_PUART);
-#if ( defined(CYW20706A2) || defined(CYW20735B0) || defined(CYW20719B0) || defined(CYW43012C0) )
+#if ( defined(CYW20706A2) || defined(CYW43012C0) )
     wiced_hal_puart_select_uart_pads( WICED_PUART_RXD, WICED_PUART_TXD, 0, 0);
 #endif
 
@@ -236,20 +229,20 @@ APPLICATION_START()
 }
 
 /*
- * Application initialization is executed after BT stack initialization is completed.
+ * Application initialization is executed after Bluetooth stack initialization is completed.
  */
 void hrc_application_init(void)
 {
     wiced_bt_gatt_status_t gatt_status;
 
-#if !defined(CYW20735B1) && !defined(CYW20835B1) && !defined(CYW20819A1) && !defined(CYW20719B2) && !defined(CYW20721B2)
-    /* Initialize wiced app */
+#if !defined(CYW20835B1) && !defined(CYW20819A1) && !defined(CYW20719B2) && !defined(CYW20721B2)
+    /* Initialize app */
     wiced_bt_app_init();
 #endif
     /* Configure LED PIN as input and initial outvalue as high */
     wiced_hal_gpio_configure_pin( APP_LED, GPIO_OUTPUT_ENABLE, GPIO_PIN_OUTPUT_HIGH );
 
-#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20735B1) || defined(CYW20835B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
+#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20835B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
     /* Configure buttons available on the platform */
     wiced_platform_register_button_callback( WICED_PLATFORM_BUTTON_1, hrc_interrupt_handler, NULL, WICED_PLATFORM_BUTTON_BOTH_EDGE);
 #else
@@ -585,7 +578,7 @@ wiced_bt_gatt_status_t hrc_gatt_discovery_complete(wiced_bt_gatt_discovery_compl
         {
             WICED_BT_TRACE("HRC:%04x-%04x\n", hrc_app_cb.hear_rate_service_s_handle, hrc_app_cb.hear_rate_service_e_handle);
 
-            /* If Heart Rate Service found tell WICED BT HRC library to start its discovery */
+            /* If Heart Rate Service found tell AIROC Bluetooth HRC library to start its discovery */
             if ((hrc_app_cb.hear_rate_service_s_handle != 0) && (hrc_app_cb.hear_rate_service_e_handle != 0))
             {
                 hrc_app_cb.discovery_state = HRC_DISCOVERY_STATE_HRS;
@@ -731,7 +724,7 @@ void hrc_interrupt_handler(void* user_data, uint8_t value )
     //WICED_BT_TRACE( "But1 %d, But2 %d, But3 %d \n", value & 0x01, ( value & 0x02 ) >> 1, ( value & 0x04 ) >> 2 );
     WICED_BT_TRACE( "hrc_interrupt_handler, app timer :%d\n", hrc_app_cb.timeout );
 
-#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20735B1) || defined(CYW20835B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
+#if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20835B1) || defined(CYW20819A1) || defined(CYW20721B2) || defined(CYW20719B2) )
     if ( wiced_hal_gpio_get_pin_input_status(WICED_GET_PIN_FOR_BUTTON(WICED_PLATFORM_BUTTON_1)) == wiced_platform_get_button_pressed_value(WICED_PLATFORM_BUTTON_1) )
 #else
     if ( wiced_hal_gpio_get_pin_input_status(APP_BUTTON) == WICED_BUTTON_PRESSED_VALUE )
