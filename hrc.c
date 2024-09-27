@@ -1,5 +1,5 @@
 /*
- * Copyright 2016-2023, Cypress Semiconductor Corporation (an Infineon company) or
+ * Copyright 2016-2024, Cypress Semiconductor Corporation (an Infineon company) or
  * an affiliate of Cypress Semiconductor Corporation.  All rights reserved.
  *
  * This software, including source code, documentation and related
@@ -98,10 +98,11 @@ extern const wiced_bt_cfg_settings_t wiced_app_cfg_settings;
 extern const wiced_bt_cfg_buf_pool_t wiced_app_cfg_buf_pools[];
 
 #ifdef CYW20706A2
+extern wiced_led_config_t platform_led[];
 #define APP_BUTTON                  WICED_GPIO_BUTTON
 #define APP_BUTTON_SETTINGS         (WICED_GPIO_BUTTON_SETTINGS( GPIO_EN_INT_BOTH_EDGE ))
 #define APP_BUTTON_DEFAULT_STATE    WICED_GPIO_BUTTON_DEFAULT_STATE
-#define APP_LED                     WICED_PLATFORM_LED_1
+#define APP_LED                     platform_led[WICED_PLATFORM_LED_1].led_gpio
 #endif
 
 #if ( defined(CYW20719B1) || defined(CYW20721B1) || defined(CYW20719B2) || defined(CYW20721B2) || defined(CYW20835B1) || defined(CYW20819A1) )
